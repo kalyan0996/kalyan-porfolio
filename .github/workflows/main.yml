@@ -4,9 +4,8 @@ on:
   push:
     branches: [ "main" ]
 
-
 jobs:
- build-and-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -19,6 +18,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-south-1
 
-    - name: Deploy statsic site to s3 bucket
-      run: aws s3 sync . s3://kalyan-portfolio --delete
-       
+    - name: Deploy static site to s3 bucket
+      # CHANGE 1: Bucket name changed to lowercase 'kalyan-portfolio'
+      # CHANGE 2: Added excludes so you don't upload .git or workflow files
+      run: |
+        aws s3 sync . s3://kalyan-portfolio \
+          --delete \
+          --exclude ".git/*" \
+          --exclude ".github/*" \
+          --exclude ".gitignore"
